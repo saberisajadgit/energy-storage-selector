@@ -2,7 +2,7 @@
 
 An interactive, browser-based tool for comparing the lifetime economics of four long-duration energy storage technologies using a scientifically grounded Levelized Cost of Storage (LCOS) model.
 
-**[Live demo →](https://your-username.github.io/energy-storage-selector)**
+**[Live demo →](https://saberisajadgit.github.io/energy-storage-selector)**
 
 Built by [Sajad Saberi, Ph.D., EIT](mailto:saberisajad@icloud.com) — Postdoctoral Research Engineer, Battery Systems & Power Electronics, University of Alabama.
 
@@ -49,12 +49,26 @@ $$\text{PV}(X) = \sum_{t=1}^{T} \frac{X_t}{(1+r)^t}$$
 Vanadium flow batteries separate power and energy costs, unlike Li-ion where they are coupled. The effective $/kWh falls for longer-duration projects:
 
 ```
-stack_cost_per_kWh   = (150 $/kW × power_kW) / energy_kWh
-electrolyte_per_kWh  = 80 $/kWh
-effective_capex      = min(list_price, max(list_price × 0.25, stack + electrolyte))
+stack_cost_per_kWh   = (500 $/kW × power_kW) / energy_kWh   ← 2025 commercial (Invinity / Largo)
+electrolyte_per_kWh  = 150 $/kWh                              ← vanadium pentoxide + processing
+scale_discount       = f(energyMWh)                           ← 0–28% volume discount
+effective_capex      = min(list_price, max(list_price × 0.60, (stack + electrolyte) × scale_discount))
 ```
 
-Reference: PNNL Vanadium Redox Flow Batteries — A Technology Review (2023)
+> **Note:** The PNNL long-term R&D stack target is $150/kW — this is NOT a current commercial price.
+> Real 2025 commercial stack cost is $400–600/kW (Invinity / Largo Resources).
+
+Scale discounts by system size (Lazard LCOS v8.0 · PNNL 2023):
+
+| System size | Discount |
+|---|---|
+| <10 MWh | 0% |
+| 10–50 MWh | 5% |
+| 50–200 MWh | 12% |
+| 200–500 MWh | 20% |
+| >500 MWh | 28% |
+
+References: PNNL Vanadium Redox Flow Batteries — A Technology Review (2023) · Invinity Energy Systems (2024) · Bushveld Minerals electrolyte cost breakdown
 
 ### Safety cost multipliers (Li-ion only)
 
@@ -97,6 +111,20 @@ Qualitative score (0–100) combining:
 - Li-ion replacement is modelled at a fixed schedule (yr 8, yr 16). Actual timing depends on real degradation, which varies with temperature, cycle depth, and C-rate.
 - SOFC RTE of 60% is the electrical-only figure. With waste heat recovery integrated into the facility design, effective RTE can reach ~70% (DOE FCTO target).
 - Iron-air capex of ~$100/kWh reflects the Google/Form Energy deal basis. The long-term target is <$20/kWh; the current first-commercial price is higher.
+
+### Minimum viable duration constraints
+
+Each technology has a physical minimum duration below which it is not economically or operationally viable:
+
+| Technology | Min viable duration | Reason |
+|---|---|---|
+| Li-ion | 1 h | No practical lower limit for grid-scale |
+| Vanadium Flow | 8 h | Stack cost makes <8h uncompetitive vs Li-ion |
+| Iron-Air | 24 h | Slow charge rate (C/20); designed for multi-day |
+| Solid Oxide FC | 12 h | High operating temperature, slow thermal ramp |
+
+The tool displays a ⚠️ warning when a technology ranks highly but falls below its minimum viable duration. The LCOS result is still shown (for comparison) but should be treated as indicative only.
+
 - The model does not account for: grid interconnection costs, land costs, permitting timelines, revenue degradation from battery capacity fade, ancillary service revenue stacking, or project financing structure.
 - **This tool is for indicative analysis only. Site-specific engineering and financial studies are required before any investment decision.**
 
@@ -150,18 +178,18 @@ No build step. No npm. No bundler. Pure ES modules — works directly in any mod
 ```bash
 # 1. Create a new GitHub repo named: energy-storage-selector
 # 2. Clone it and copy these files in
-git clone https://github.com/YOUR-USERNAME/energy-storage-selector
+git clone https://github.com/saberisajadgit/energy-storage-selector
 cp -r /path/to/these/files/* energy-storage-selector/
 cd energy-storage-selector
 
 # 3. Push
 git add .
-git commit -m "Initial release — LCOS energy storage selector v1.1"
+git commit -m "Initial release — LCOS energy storage selector v1.2"
 git push origin main
 
 # 4. Enable GitHub Pages
 # Go to: Settings → Pages → Source → Deploy from branch → main → / (root) → Save
-# Your app will be live at: https://YOUR-USERNAME.github.io/energy-storage-selector
+# Your app will be live at: https://saberisajadgit.github.io/energy-storage-selector
 ```
 
 > **Important:** Because the JS files use ES modules (`type="module"`), the app must be served over HTTP — it will not work when opened as a local `file://` URL directly in a browser. Use GitHub Pages, any static host, or a local server (`python3 -m http.server 8080`).
