@@ -27,11 +27,15 @@ Built by [Sajad Saberi, Ph.D., EIT](mailto:saberisajad@icloud.com) — Postdocto
 
 The model follows the **DOE Energy Storage Grand Challenge framework** and **Lazard LCOS v8.0**:
 
-$$\text{LCOS} = \frac{C_{\text{capex}} + C_{\text{replace, PV}} + C_{\text{O\&M, PV}} + C_{\text{charge, PV}} - V_{\text{residual, PV}}}{E_{\text{out, PV}}}$$
+```math
+\text{LCOS} = \frac{C_{\text{capex}} + C_{\text{replace, PV}} + C_{\text{O\&M, PV}} + C_{\text{charge, PV}} - V_{\text{residual, PV}}}{E_{\text{out, PV}}}
+```
 
 Where all future cost and energy terms are discounted to present value at the project WACC:
 
-$$\text{PV}(X) = \sum_{t=1}^{T} \frac{X_t}{(1+r)^t}$$
+```math
+\text{PV}(X) = \sum_{t=1}^{T} \frac{X_t}{(1+r)^t}
+```
 
 ### Cost components
 
